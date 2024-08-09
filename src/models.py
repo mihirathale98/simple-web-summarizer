@@ -9,11 +9,11 @@ class TogetherModel:
 
 
     def generate(self, prompt, model="meta-llama/Meta-Llama-3.1-8B-Instruct-Turbo"):
-        completion = client.chat.completions.create(
+        completion = self.together_client.chat.completions.create(
                 model=model,
                 messages=[{"role": "user", "content": prompt}],
                 )
-        return completion
+        return completion.choices[0].message.content
 
 
 class OpenAIModel:
