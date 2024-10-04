@@ -32,6 +32,7 @@ class Scraper:
         web_body = self.get_web_body(url)
         soup = self.parse_web_body(web_body)
         text = self.get_text_from_soup(soup)
+        text = self.clean_text(text)
         return text
 
 
