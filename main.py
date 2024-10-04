@@ -5,6 +5,7 @@ from src.models import TogetherModel
 from src.web_search_api import brave_search
 from src.query_gen import generate_queries
 from src.page_scraper import Scraper
+from src.summarizer import summarize
 
 model = TogetherModel()
 scraper = Scraper()
@@ -35,6 +36,14 @@ def scrape(request: dict):
             texts.append(f'URL: {url}\nContent: \n{scraped_data}')
     return {"texts": '\n\n'.join(texts)}
 
+@app.post('/summarize')
+def get_summary(request: dict):
+    query = request["query"]
+    intent_reasoning = request["intent_reasoning"]
+    sub_queries = request["sub_queries"]
+    web_results = request["web_results"]
+    summary = summarize(query, intent_reasoning, sub_queries, web_results)
+    return {"summary": summary}
 
 if __name__ == "__main__":
     uvicorn.run(app, host="0.0.0.0", port=8000)  

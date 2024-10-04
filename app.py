@@ -26,18 +26,23 @@ if button:
                 web_search_results[query] = results
                 time.sleep(2)
 
-        st.markdown("# Web Search Results")
 
         content = ""
         for query, results in web_search_results.items():
-            urls = [result["url"] for result in results]
-            scraped_text = requests.post('http://localhost:8000/scrape', json={"urls": urls}).json()["texts"]
+            with st.spinner(f'Retrieving Data for "{query}"'):
+                urls = [result["url"] for result in results]
+                scraped_text = requests.post('http://localhost:8000/scrape', json={"urls": urls}).json()["texts"]
 
-            content += f"## {query}\n"
-            content += scraped_text
-            content += "\n\n"
+                content += f"## {query}\n"
+                content += scraped_text
+                content += "\n\n"
+        if content != "":
+            with st.spinner('Getting your answer'):
+                final_summary = requests.post('http://localhost:8000/summarize', json={"query": query, "intent_reasoning": reasoning, "sub_queries": queries, "web_results": content}).json()["summary"]
 
-        st.markdown(content)
+            st.write(final_summary)
+
+        
 
 
             

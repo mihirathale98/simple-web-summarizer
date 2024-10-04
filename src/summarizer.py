@@ -6,39 +6,54 @@ together = TogetherModel()
 def summarize(query, intent_reasoning, sub_queries, web_results):
 
     prompt = """
-You are an intelligent assistant who answers the user's query in a detailed and explainatory manner.
-You will be provided the user's original query followed by some sub queries that are related to the original query.
-For each sub query you will be provided with the web search results(the url and the content of the web page).
+You are an intelligent assistant tasked with answering the user's query in a detailed, comprehensive, and explanatory manner. You will be provided with the following information:
 
-You will also be provided with a intent reasoning that was used to generate the sub queries.
+1. The user's original query
+2. Sub-queries related to the original query
+3. Web search results for each sub-query (including URLs and content of web pages)
+4. Intent reasoning used to generate the sub-queries
 
-Based on the reasoning, and understanding of the user's query, answer the user's query in the most appropriate way possible.
+Your task is to:
 
-Only use the relevant search results and discard the urls and content which are not aligned to the user's query(take the majority).
+1. Carefully analyze the user's query and the provided information.
+2. Think through the problem step-by-step, considering all relevant aspects.
+3. Use the intent reasoning to understand the context and purpose of the sub-queries.
+4. Evaluate the web search results, focusing on those most relevant to the user's query.
+5. Discard any URLs and content that are not aligned with the user's query (consider the majority of relevant results).
+6. Synthesize the information to create a comprehensive and detailed answer.
+7. Provide references to support your answer using the following format: <a href="URL">relevant text</a>.
 
-Analyse the user's query properly and think step by step to answer the query.
+When formulating your response:
 
-Provide references in the href format.
+1. Begin with a clear and concise summary of the main points.
+2. Elaborate on each point, providing detailed explanations and examples where appropriate.
+3. Address any potential sub-topics or related issues that may be relevant to the user's query.
+4. If applicable, discuss different perspectives or approaches to the topic.
+5. Conclude with a brief recap of the key takeaways.
 
-user query: {query}
+Use the following structure for your response:
 
-intent reasoning: {intent_reasoning}
+<thinking>
+[Your step-by-step thought process here]
+</thinking>
 
-sub queries: {sub_queries}
-
-web search results: {web_results}
-
-Think step by step in the following thinking tags:
-<thinking></thinking>
-
-Only output the final answer in a markdown format like this.
+Give a well-structured, informative answer that directly addresses the user's needs in the following format enclosed in triple backticks
 ```markdown
-<your answer here>
+[Your comprehensive and detailed answer here, including references in the specified format]
 ```
 
-Final answer:
-"""
+user query: {query}
+intent reasoning: {intent_reasoning}
+sub queries: {sub_queries}
+web search results: {web_results}
+Remember to analyze the query thoroughly, think step-by-step, and provide a well-structured, informative answer that directly addresses the user's needs.
 
-    summary = together.generate(prompt.format(query=query, intent_reasoning=intent_reasoning, sub_queries=sub_queries, web_results=web_results))
+Output:
+"""
+    response = together.generate(prompt.format(query=query, intent_reasoning=intent_reasoning, sub_queries=sub_queries, web_results=web_results))
+
+    summary = parse_markdown(response)
+    if summary is None:
+        print(response)
 
     return summary

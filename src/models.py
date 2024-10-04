@@ -8,7 +8,7 @@ class TogetherModel:
         self.together_client = Together()
 
 
-    def generate(self, prompt, model="meta-llama/Meta-Llama-3.1-8B-Instruct-Turbo"):
+    def generate(self, prompt, model="meta-llama/Llama-3.2-3B-Instruct-Turbo"):
         completion = self.together_client.chat.completions.create(
                 model=model,
                 messages=[{"role": "user", "content": prompt}],
