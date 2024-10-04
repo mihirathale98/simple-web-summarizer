@@ -1,5 +1,6 @@
 import requests
 import streamlit as st
+import time
 
 
 query = st.text_input("Enter your query:")
@@ -10,8 +11,35 @@ if button:
     if query:
         response = requests.post('http://localhost:8000/search', json={"query": query})
         if response.status_code == 200:
-            st.text(response.json()["queries"])
+            queries = response.json()["queries"]
+            reasoning = response.json()["reasoning"]
         else:
             st.text(response.json())
+        web_search_results = {}
+        for query in queries:
+            with st.spinner(f'Searching for "{query}"'):
+                response = requests.post('http://localhost:8000/web_search', json={"query": query, "k": 5})
+                if response.status_code == 200:
+                    results = response.json()["results"]
+                else:
+                    st.text(response.json())
+                web_search_results[query] = results
+                time.sleep(2)
+
+        st.markdown("# Web Search Results")
+
+        content = ""
+        for query, results in web_search_results.items():
+            urls = [result["url"] for result in results]
+            scraped_text = requests.post('http://localhost:8000/scrape', json={"urls": urls}).json()["texts"]
+
+            content += f"## {query}\n"
+            content += scraped_text
+            content += "\n\n"
+
+        st.markdown(content)
+
+
+            
 
 
