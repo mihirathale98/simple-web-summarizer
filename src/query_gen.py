@@ -1,5 +1,5 @@
 from src.models import TogetherModel
-from src.utils import parse_json
+from src.utils import parse_json, parse_reasoning
 
 together = TogetherModel()
 
@@ -11,7 +11,7 @@ def generate_queries(query):
 
     user query: {query}
 
-    Think step by step in the following thinking tags:
+    Think step by step in the following thinking tags and show the reasoning:
     <thinking></thinking>
 
     Based on the reasoning, generate the 3 queries in the following format:
@@ -19,6 +19,7 @@ def generate_queries(query):
 
     Output:
 """ 
-    
-    queries = parse_json(together.generate(prompt.format(query=query)))
-    return queries
+    response = together.generate(prompt.format(query=query))
+    queries = parse_json(response)
+    reasoning = parse_reasoning(response)
+    return queries, reasoning
