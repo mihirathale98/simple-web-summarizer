@@ -29,7 +29,11 @@ class Scraper:
 
 
     def get_text_from_url(self, url):
-        web_body = self.get_web_body(url)
+        try:
+            web_body = self.get_web_body(url)
+        except requests.exceptions.RequestException as e:
+            print(f"An error occurred: {e}")
+            return None
         soup = self.parse_web_body(web_body)
         text = self.get_text_from_soup(soup)
         text = self.clean_text(text)

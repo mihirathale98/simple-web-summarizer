@@ -28,7 +28,11 @@ def web_search(request: dict):
 @app.post('/scrape')
 def scrape(request: dict):
     urls = request["urls"]
-    texts = [f'URL: {url}\nContent: \n{scraper.get_text_from_url(url)}' for url in urls]
+    texts = []
+    for url in urls:
+        scraped_data = scraper.get_text_from_url(url)
+        if scraped_data:
+            texts.append(f'URL: {url}\nContent: \n{scraped_data}')
     return {"texts": '\n\n'.join(texts)}
 
 
