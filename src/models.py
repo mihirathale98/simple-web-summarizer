@@ -22,7 +22,7 @@ class OpenAIModel:
 
 
     def generate(self, prompt, model="gpt-3.5-turbo"):
-        completion = client.chat.completions.create(
+        completion = self.openai_client.chat.completions.create(
                 model=model,
                 messages=[{"role": "user", "content": prompt}],
                 )
@@ -34,7 +34,7 @@ class AnthropicModel:
         self.anthropic_client = Anthropic()
 
     def generate(self, prompt, model="claude-v1.3-100k"):
-        completion = client.completion(
+        completion = self.anthropic_client.completion(
                 prompt=prompt,
                 model=model,
                 )
